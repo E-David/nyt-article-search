@@ -33,7 +33,7 @@ var displayHomepage = function(collection){
 	htmlString = "<div class='article-container'>" // opens the article container div
 
 	console.log(models[0]) // simple test to visualize a single model from the data (not required)
-	for(var i = 0; i < models.length; i++){ // loop-de-loop
+	for(var i = 0; i < models.length; i++){ // loop-de-loop :D
 
 		var headline = models[i].get("headline").main ? models[i].get("headline").main : models[i].get("headline").name
 		// ternary statment ( if the .main property exists ? headline becomes .main : else headline becomes .name )
