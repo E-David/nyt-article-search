@@ -33,7 +33,7 @@ var displayHomepage = function(collection){
 	htmlString = "<div class='article-container'>" // opens the article container div
 
 	console.log(models[0]) // simple test to visualize a single model from the data (not required)
-	for(var i = 0; i < models.length; i++){ // loop-de-loop
+	for(var i = 0; i < models.length; i++){ // loop-de-loop :D
 
 		var headline = models[i].get("headline").main ? models[i].get("headline").main : models[i].get("headline").name
 		// ternary statment ( if the .main property exists ? headline becomes .main : else headline becomes .name )
@@ -55,7 +55,7 @@ var Controller = Backbone.Router.extend({ // Use this exact syntax. Accesses "Ro
 		"*default": "handleDefault" //when the url contains any hash pattern not found (indicated by *) invoke the handleDefault method
 	},
 	handleHome: function(){
-		console.log("Welcome home") // simple test to ensure handleHome is invoked (not required)
+		console.log("Welcome home") // simple test to ensure handleHome is invoked (not required) :D 
 		var articleCollection = new ArticleCollection(), // this creates an instance of the ArticleCollection constructor
 			promise = articleCollection.fetch() // invokes Backbone fetch method which requests data from url in ArticleCollection constructor seen above (line 21) assigns return value to variable promise
 		
