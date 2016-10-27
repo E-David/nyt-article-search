@@ -10,6 +10,16 @@ var ArticleCollection = Backbone.Collection.extend({  // Use this exact syntax. 
 	}
 })
 
+var ArticleModel = Backbone.Model.extend({
+	url: "https://api.nytimes.com/svc/search/v2/articlesearch.json",
+	parse: function(rawResponse){
+		var parsedResponse = rawResponse.response.docs[0]
+		console.log(parsedResponse)
+		return parsedResponse;
+	}
+
+})
+
 //VIEWS
 var searchNode = document.querySelector(".search")
 
@@ -29,14 +39,16 @@ var ListView = Backbone.View.extend({
 	el: document.querySelector(".news-container"),
 	_render: function(){
 		var articles = this.collection.models
-		console.log(articles)
 		var htmlString = ""
 		for(var i = 0; i < articles.length; i++){
 			var articleModel = articles[i]
 			var headline = articleModel.get("headline").name ? articleModel.get("headline").name : articleModel.get("headline").main
-			
-			htmlString += "<a href='"
+			var articleID = articleModel.get("_id")
+
+			console.log(articleModel)
+			htmlString += "<a href='#detail/" + articleID +"'>"
 			htmlString += "<h3>" + headline + "</h3>"
+			htmlString += "</a>"
 		}
 		this.el.innerHTML = htmlString
 
@@ -44,6 +56,22 @@ var ListView = Backbone.View.extend({
 	initialize: function(){
 		console.log("making a new view")
 		this.collection.on("sync",this._render.bind(this))
+	}
+})
+
+var DetailView = Backbone.View.extend({
+	el: document.querySelector(".news-container"),
+	_render: function(){
+		var articleModel = this.model
+		var htmlString = ""
+		var headline = articleModel.get("headline").name ? articleModel.get("headline").name : articleModel.get("headline").main
+
+		htmlString += "<p>" + articleModel.get("snippet") + "</p>"
+		this.el.innerHTML = htmlString
+	},
+	initialize: function(){
+		var boundRender = this._render.bind(this)
+		this.model.on("sync", boundRender)
 	}
 })
 
@@ -70,7 +98,7 @@ var Controller = Backbone.Router.extend({ // Use this exact syntax. Accesses "Ro
 		})
 	},
 	handleSearch: function(term){ // this method was not completed in class
-		 var articleCollection = new ArticleCollection(), // this creates an instance of the ArticleCollection constructor
+		var articleCollection = new ArticleCollection(), // this creates an instance of the ArticleCollection constructor
 			view = new ListView({
 				collection: articleCollection
 			})
@@ -80,10 +108,21 @@ var Controller = Backbone.Router.extend({ // Use this exact syntax. Accesses "Ro
 				"api-key": NYT_API_KEY,
 				"q": term
 			}
-		})// simple test to ensure handleSearch is invoked with a given term (not required)
+		})
 	},
 	handleDetail: function(articleID){
-		console.log(articleID)
+		var articleModel = new ArticleModel(),
+			view = new DetailView({
+				model: articleModel
+			})
+
+		articleModel.fetch({
+			data: {
+				"api-key": NYT_API_KEY,
+				"fq": "_id:" + articleID
+			}
+		})
+
 	},
 	handleDefault: function(){ // this method handles an a hash not specified in the "routes" property on line 50
 		location.hash = "home" // changes hash to home which invokes the handleHome (because the home hash invokes handleHome in routes (see line 50))
